@@ -4,7 +4,9 @@ import edu.sikora.ca.Constants;
 import edu.sikora.ca.Point;
 import edu.sikora.ca.cells.Cell;
 import edu.sikora.ca.cells.Inclusion;
+import edu.sikora.ca.neighbourhoods.MooreNeighbourhood;
 import edu.sikora.ca.neighbourhoods.Neighbourhood;
+import edu.sikora.ca.neighbourhoods.NeighbourhoodInfo;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -56,7 +58,22 @@ public class Space extends Observable implements Runnable {
      * Randomly places grain for MC growth.
      */
     private void generateMCSpace() {
-        //To change body of created methods use File | Settings | File Templates.
+        Random lvRandom = new Random(System.currentTimeMillis());
+
+        mMarkers = new HashMap<Long, Color>();
+        mMarkers.put(Constants.INCLUSION_COLOR_ID, Constants.INCLUSION_COLOR);
+        mState = new Cell[mHeight][mWidth];
+
+        for (int i = 0; i < mMCStates; ++i)
+            addNewMarker();
+
+        Long[] lvMarkers = new Long[mMCStates];
+
+        lvMarkers = mMarkers.keySet().toArray(lvMarkers);
+
+        for (int i = 0; i < mHeight; ++i)
+            for (int j = 0; j < mWidth; ++j)
+                mState[i][j] = new Cell(true, lvMarkers[lvRandom.nextInt(2000) % mMCStates]);
     }
 
     /**
@@ -167,7 +184,25 @@ public class Space extends Observable implements Runnable {
      * Calculates next MC step.
      */
     private void nextMCStep() {
-        //To change body of created methods use File | Settings | File Templates.
+        Vector<Point> lvBorderGrains = findBorderGrains();
+        Random lvRandom = new Random(System.currentTimeMillis());
+
+        Cell[][] lvNewSpace = mState.clone();
+
+        for (Point lvBorderGrain : lvBorderGrains) {
+            Cell lvCurrentCell = lvNewSpace[lvBorderGrain.y][lvBorderGrain.x];
+            NeighbourhoodInfo lvNI = mNeighbourhood.getNeighbourhoodInfo(lvBorderGrain.x, lvBorderGrain.y);
+
+            int lvEnergy = lvNI.calculateEnergy(lvCurrentCell.getMarker());
+            Vector<Long> lvMarkers = lvNI.getNeighbourMarkers();
+
+            Long lvNewMarker = lvMarkers.get(lvRandom.nextInt(lvMarkers.size()));
+            int lvNewEnergy = lvNI.calculateEnergy(lvNewMarker);
+
+            if (lvNewEnergy - lvEnergy <= 0)
+                lvCurrentCell.setMarker(lvNewMarker);
+        }
+        mState = lvNewSpace;
     }
 
     /**
@@ -235,6 +270,32 @@ public class Space extends Observable implements Runnable {
                 mState[lvPoint.y][lvPoint.x] = new Inclusion();
             }
         }
+    }
+
+    public Vector<Point> findBorderGrains() {
+        Vector<Point> lvPoints = new Vector<Point>();
+        MooreNeighbourhood lvMoore = new MooreNeighbourhood(mNeighbourhood.isPeriodic(), this);
+
+        for (int i = 0; i < mHeight; ++i) {
+            for (int j = 0; j < mWidth; ++j) {
+                if (!mState[i][j].isAlive())
+                    continue;
+
+                final Long lvCurrentCell = mState[i][j].getMarker();
+              /*  if (!lvCurrentCell.equals(mState[i][((j + 1) % mWidth + mWidth) % mWidth].getMarker())
+                        || !lvCurrentCell.equals(mState[((i + 1) % mHeight + mHeight) % mHeight][((j + 1) % mWidth + mWidth) % mWidth].getMarker())
+                        || !lvCurrentCell.equals(mState[((i + 1) % mHeight + mHeight) % mHeight][j].getMarker())) {
+                    lvPoints.add(new Point(j, i));
+                }*/
+                Vector<Point> lvNeighbours = lvMoore.calculateNeighboursCoord(j, i);
+                for (Point lvNeighbour : lvNeighbours) {
+                    if (!lvCurrentCell.equals(mState[lvNeighbour.y][lvNeighbour.x].getMarker()))
+                        lvPoints.add(new Point(j, i));
+                }
+            }
+        }
+
+        return lvPoints;
     }
 
     public void setTemperature(double pmTemperature) {

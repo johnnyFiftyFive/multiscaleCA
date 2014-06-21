@@ -1,15 +1,15 @@
 package edu.sikora.ca.view;
 
-import edu.sikora.ca.space.Space;
 import edu.sikora.ca.cells.Cell;
+import edu.sikora.ca.space.Space;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
 /**
  * @author Kamil Sikora
@@ -71,11 +71,11 @@ public class SpaceCanvas extends JPanel implements Observer {
                 g.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
             }
 
-       /* Vector<edu.sikora.ca.edu.sikora.ca.Point> lvBorderGrains = space.findBorderGrains();
+      /*  Vector<edu.sikora.ca.Point> lvBorderGrains = space.findBorderGrains();
         g.setColor(edu.sikora.ca.Constants.BORDER_COLOR);
-        for (edu.sikora.ca.edu.sikora.ca.Point lvBorderGrain : lvBorderGrains) {
+        for (edu.sikora.ca.Point lvBorderGrain : lvBorderGrains) {
 
-            g.fillRect(lvBorderGrain.y * cellWidth, lvBorderGrain.x * cellHeight, cellWidth, cellHeight);
+            g.fillRect(lvBorderGrain.y * cellHeight, lvBorderGrain.x * cellWidth, cellWidth, cellHeight);
         }*/
 
     }
@@ -94,7 +94,11 @@ public class SpaceCanvas extends JPanel implements Observer {
         return lvPoint;
     }
 
-    private enum Mode {
+    public void setCanvasMode(Mode pmCanvasMode) {
+        mCanvasMode = pmCanvasMode;
+    }
+
+    public enum Mode {
         PLACE_GRAIN,
         PLACE_INCLUSION,
         SELECT_GRAIN

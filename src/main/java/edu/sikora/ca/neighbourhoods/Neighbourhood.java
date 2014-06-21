@@ -106,4 +106,8 @@ public abstract class Neighbourhood {
 
         return lvNI;
     }
+
+    public boolean isPeriodic() {
+        return mPeriodic;
+    }
 }
