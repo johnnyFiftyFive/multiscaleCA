@@ -87,8 +87,8 @@ public class MainWindow {
                         automataSpace.setNeighbourhood(new VonNeumannNeighbourhood(lvPeriodicBorderCondition, automataSpace));
                     if (NeighbourhoodEnum.Moore.equals(lvSelectedNeighbourhood))
                         automataSpace.setNeighbourhood(new MooreNeighbourhood(lvPeriodicBorderCondition, automataSpace));
-                   /* if (NeighbourhoodEnum.ExtendedMoore.equals(lvSelectedNeighbourhood))
-                        automataSpace.setNeighbourhood(new ExtendedMooreNeighbourhood(height, width, lvPeriodicBorderCondition, automataSpace)); */
+                    if (NeighbourhoodEnum.ExtendedMoore.equals(lvSelectedNeighbourhood))
+                        automataSpace.setNeighbourhood(new ExtendedMooreNeighbourhood(lvPeriodicBorderCondition, automataSpace));
                     if (NeighbourhoodEnum.Pentagonal.equals(lvSelectedNeighbourhood))
                         automataSpace.setNeighbourhood(new PentagonalNeighbourhood(lvPeriodicBorderCondition, automataSpace));
                     if (NeighbourhoodEnum.Hexagonal.equals(lvSelectedNeighbourhood))

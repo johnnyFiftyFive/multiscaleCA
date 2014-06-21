@@ -47,6 +47,18 @@ public class NeighbourhoodInfo {
         return lvMarker;
     }
 
+    public int getLargestCount() {
+        int lvBiggestCount = 0;
+
+        Set<Map.Entry<Long, Integer>> lvEntries = mCells.entrySet();
+        for (Map.Entry<Long, Integer> lvEntry : lvEntries)
+            if (lvEntry.getValue() > lvBiggestCount) {
+                lvBiggestCount = lvEntry.getValue();
+            }
+
+        return lvBiggestCount;
+    }
+
     public int getTotalCount() {
         return mTotalCount;
     }

@@ -94,7 +94,7 @@ public abstract class Neighbourhood {
         return !lvCell.isAlive() && lvNI.getTotalCount() > 0 ? new Cell(true, lvNI.getMarkerOfLargestCount()) : lvCell;
     }
 
-    private NeighbourhoodInfo getNeighbourhoodInfo(int pmX, int pmY) {
+    public NeighbourhoodInfo getNeighbourhoodInfo(int pmX, int pmY) {
         NeighbourhoodInfo lvNI = new NeighbourhoodInfo();
 
         Vector<Point> points = calculateNeighboursCoord(pmX, pmY);
