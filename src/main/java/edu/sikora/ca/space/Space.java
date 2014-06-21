@@ -3,12 +3,14 @@ package edu.sikora.ca.space;
 import edu.sikora.ca.Constants;
 import edu.sikora.ca.Point;
 import edu.sikora.ca.cells.Cell;
+import edu.sikora.ca.cells.Inclusion;
 import edu.sikora.ca.neighbourhoods.Neighbourhood;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Random;
+import java.util.Vector;
 
 /**
  * @author Kamil Sikora
@@ -18,7 +20,7 @@ public class Space extends Observable implements Runnable {
     public final static double BOLZMANN = 0.00008617332;
     private int mHeight;
     private int mWidth;
-    private int mTemperature = 720;
+    private double mTemperature = 720;
     private int mMCStates = 50;
     private HashMap<Long, Color> mMarkers;
     private TaskType mTaskType;
@@ -176,7 +178,7 @@ public class Space extends Observable implements Runnable {
 
         for (int i = 0; i < mHeight; ++i)
             for (int j = 0; j < mWidth; ++j)
-                newSpace[i][j] = mNeighbourhood.newCellState(j, i, mState);
+                newSpace[i][j] = mNeighbourhood.newCellState(j, i);
         mState = newSpace;
     }
 
@@ -210,5 +212,56 @@ public class Space extends Observable implements Runnable {
 
     public Color getColor(final Long marker) {
         return mMarkers.get(marker);
+    }
+
+    public void setNeighbourhood(Neighbourhood pmNeighbourhood) {
+        mNeighbourhood = pmNeighbourhood;
+    }
+
+    /**
+     * Method places inclusions in new space.
+     *
+     * @param pmInclusionNumber number of inclusions to place
+     */
+    public void placeInclusions(int pmInclusionNumber) {
+        Random lvRandom = new Random(System.currentTimeMillis());
+        for (int i = 0; i < pmInclusionNumber; i++) {
+            int x = lvRandom.nextInt(mHeight);
+            int y = lvRandom.nextInt(mWidth);
+            Vector<Point> lvPoints = mNeighbourhood.calculateNeighboursCoord(x, y);
+
+            mState[y][x] = new Inclusion();
+            for (Point lvPoint : lvPoints) {
+                mState[lvPoint.y][lvPoint.x] = new Inclusion();
+            }
+        }
+    }
+
+    public void setTemperature(double pmTemperature) {
+        mTemperature = pmTemperature;
+    }
+
+    public double getTemperature() {
+        return mTemperature;
+    }
+
+    public void setTemperature(int pmTemperature) {
+        mTemperature = pmTemperature;
+    }
+
+    public void setGeneratedGrains(int pmGeneratedGrains) {
+        mMCStates = pmGeneratedGrains;
+    }
+
+    public void setGrainGrowth() {
+        mTaskType = TaskType.GRAIN_GROWTH;
+    }
+
+    public void setMonteCarlo() {
+        mTaskType = TaskType.MONTE_CARLO;
+    }
+
+    public void setSRX() {
+        mTaskType = TaskType.SRX;
     }
 }

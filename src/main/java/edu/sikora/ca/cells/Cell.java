@@ -9,6 +9,7 @@ import java.util.Random;
 public class Cell {
     private boolean mAlive;
     private Long mMarker;
+    private boolean mDisabled = false;
 
     @Deprecated
     public Cell(boolean alive) {
@@ -41,5 +42,13 @@ public class Cell {
 
     public void setMarker(Long pmMarker) {
         mMarker = pmMarker;
+    }
+
+    public boolean isDisabled() {
+        return mDisabled;
+    }
+
+    public void setDisabled(boolean pmDisabled) {
+        mDisabled = pmDisabled;
     }
 }

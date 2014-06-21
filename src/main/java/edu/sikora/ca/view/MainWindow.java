@@ -1,8 +1,9 @@
 package edu.sikora.ca.view;
 
 import edu.sikora.ca.Constants;
+import edu.sikora.ca.neighbourhoods.*;
 import edu.sikora.ca.space.Space;
-import edu.sikora.ca.space.neighbourhoods.*;
+import edu.sikora.ca.space.TaskType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +37,8 @@ public class MainWindow {
     private JRadioButton rbtGrainGrowth;
     private JRadioButton rbtMonteCarlo;
     private JRadioButton rbtSRX;
+    private JRadioButton rbRandomPlacement;
+    private JRadioButton rbUniformPlacement;
     private Space automataSpace;
     private Thread mSpaceThread;
 
@@ -63,14 +66,17 @@ public class MainWindow {
                     Integer width = (Integer) spaceParameters.get(Constants.WIDTH);
                     Integer height = (Integer) spaceParameters.get(Constants.HEIGHT);
 
-                    Space.TaskType lvTaskType = Space.TaskType.GRAIN_GROWTH;
+                    TaskType lvTaskType = TaskType.GRAIN_GROWTH;
                     if (rbtMonteCarlo.isSelected())
-                        lvTaskType = Space.TaskType.MONTE_CARLO;
+                        lvTaskType = TaskType.MONTE_CARLO;
                     if (rbtSRX.isSelected())
-                        lvTaskType = Space.TaskType.SRX;
+                        lvTaskType = TaskType.SRX;
 
                     automataSpace = new Space(height, width, lvTaskType);
-                    automataSpace.randomPlacement(Integer.parseInt(initialGrainCountField.getText()));
+                    if (rbRandomPlacement.isSelected())
+                        automataSpace.randomPlacement(Integer.parseInt(initialGrainCountField.getText()));
+                    else
+                        automataSpace.uniformPlacement(Integer.parseInt(initialGrainCountField.getText()));
 
                     boolean lvPeriodicBorderCondition = true;
                     if (absorbentRB.isSelected())
@@ -78,15 +84,15 @@ public class MainWindow {
 
                     NeighbourhoodEnum lvSelectedNeighbourhood = (NeighbourhoodEnum) neighbourhoodsBox.getSelectedItem();
                     if (NeighbourhoodEnum.VonNeumann.equals(lvSelectedNeighbourhood))
-                        automataSpace.setNeighbourhood(new VonNeumannNeighbourhood(height, width, lvPeriodicBorderCondition, automataSpace));
+                        automataSpace.setNeighbourhood(new VonNeumannNeighbourhood(lvPeriodicBorderCondition, automataSpace));
                     if (NeighbourhoodEnum.Moore.equals(lvSelectedNeighbourhood))
-                        automataSpace.setNeighbourhood(new MooreNeighbourhood(height, width, lvPeriodicBorderCondition, automataSpace));
-                    if (NeighbourhoodEnum.ExtendedMoore.equals(lvSelectedNeighbourhood))
-                        automataSpace.setNeighbourhood(new ExtendedMooreNeighbourhood(height, width, lvPeriodicBorderCondition, automataSpace));
+                        automataSpace.setNeighbourhood(new MooreNeighbourhood(lvPeriodicBorderCondition, automataSpace));
+                   /* if (NeighbourhoodEnum.ExtendedMoore.equals(lvSelectedNeighbourhood))
+                        automataSpace.setNeighbourhood(new ExtendedMooreNeighbourhood(height, width, lvPeriodicBorderCondition, automataSpace)); */
                     if (NeighbourhoodEnum.Pentagonal.equals(lvSelectedNeighbourhood))
-                        automataSpace.setNeighbourhood(new PentagonalNeighbourhood(height, width, lvPeriodicBorderCondition, automataSpace));
+                        automataSpace.setNeighbourhood(new PentagonalNeighbourhood(lvPeriodicBorderCondition, automataSpace));
                     if (NeighbourhoodEnum.Hexagonal.equals(lvSelectedNeighbourhood))
-                        automataSpace.setNeighbourhood(new HexagonalNeighbourhood(height, width, lvPeriodicBorderCondition, automataSpace));
+                        automataSpace.setNeighbourhood(new HexagonalNeighbourhood(lvPeriodicBorderCondition, automataSpace));
 
                     spacePanel = new SpaceCanvas(automataSpace);
                     automataSpace.placeInclusions(Integer.parseInt(mInclusionsField.getText()));
@@ -106,7 +112,7 @@ public class MainWindow {
                 } else {
                     startButton.setEnabled(false);
                     stopButton.setEnabled(true);
-                    automataSpace.setWorking();
+                    automataSpace.setWorking(true);
                 }
             }
         });
@@ -118,7 +124,7 @@ public class MainWindow {
                 stopButton.setEnabled(false);
                 resetButton.setEnabled(true);
 
-                automataSpace.setNotWorking();
+                automataSpace.setWorking(false);
             }
         });
 
@@ -160,8 +166,8 @@ public class MainWindow {
         mTemperatureField = new LimitedJTextField("720", 5);
         mGeneratedGrainsField = new LimitedJTextField("50", 5);
 
-        automataSpace = new Space(100, 100, Space.TaskType.GRAIN_GROWTH);
-        automataSpace.setNeighbourhood(new HexagonalNeighbourhood(100, 100, true, automataSpace));
+        automataSpace = new Space(100, 100, TaskType.GRAIN_GROWTH);
+        automataSpace.setNeighbourhood(new MooreNeighbourhood(true, automataSpace));
         spacePanel = new SpaceCanvas(automataSpace);
         automataSpace.addObserver((SpaceCanvas) spacePanel);
     }
