@@ -42,8 +42,8 @@ public class MainWindow {
     private JRadioButton rbUniformPlacement;
     private JPanel plSRX;
     private JButton btEnergyDistribution;
-    private JRadioButton mHomogenousRadioButton;
-    private JRadioButton mHeterogenousRadioButton;
+    private JRadioButton rbHomogoneus;
+    private JRadioButton rbHeterogenous;
     private JTextField tfNucleiNumber;
     private JComboBox cbNucleation;
     private Space automataSpace;
@@ -164,6 +164,17 @@ public class MainWindow {
         rbtGrainGrowth.addActionListener(lvFunctionListener);
         rbtMonteCarlo.addActionListener(lvFunctionListener);
         rbtSRX.addActionListener(lvFunctionListener);
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (rbHomogoneus.isSelected())
+                    automataSpace.setHeterogeneusNucleation(false);
+                else
+                    automataSpace.setHeterogeneusNucleation(true);
+            }
+        };
+        rbHomogoneus.addActionListener(listener);
+        rbHeterogenous.addActionListener(listener);
     }
 
     public static void main(String[] args) {

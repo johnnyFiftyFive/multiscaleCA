@@ -186,7 +186,7 @@
             </constraints>
             <properties>
               <text value="Temperature [°C]"/>
-              <visible value="false"/>
+              <visible value="true"/>
             </properties>
           </component>
           <component id="7c76" class="javax.swing.JTextField" binding="mTemperatureField" custom-create="true">
@@ -197,7 +197,7 @@
             </constraints>
             <properties>
               <text value="720"/>
-              <visible value="false"/>
+              <visible value="true"/>
             </properties>
           </component>
           <component id="6485e" class="javax.swing.JSeparator">
@@ -326,7 +326,7 @@
                   <text value="Nucleation"/>
                 </properties>
               </component>
-              <component id="6d0e4" class="javax.swing.JRadioButton" binding="mHomogenousRadioButton" default-binding="true">
+              <component id="6d0e4" class="javax.swing.JRadioButton" binding="rbHomogoneus">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -335,7 +335,7 @@
                   <text value="Homogenous"/>
                 </properties>
               </component>
-              <component id="f051f" class="javax.swing.JRadioButton" binding="mHeterogenousRadioButton" default-binding="true">
+              <component id="f051f" class="javax.swing.JRadioButton" binding="rbHeterogenous">
                 <constraints>
                   <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>

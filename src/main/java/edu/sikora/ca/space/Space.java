@@ -20,6 +20,8 @@ import java.util.Vector;
  */
 public class Space extends Observable implements Runnable {
     public final static double BOLZMANN = 0.00008617332;
+    private final double JGB = 1.0;
+    private Long mLastRecrystalizedColor;
     private int mHeight;
     private int mWidth;
     private double mTemperature = 720;
@@ -39,6 +41,7 @@ public class Space extends Observable implements Runnable {
     private boolean mStayAlive;
     private Cell[][] mState;
     private NucleationType mNucleationType;
+    private boolean mHeterogeneusNucleation;
 
     public Space(int pmHeight, int pmWidth, TaskType pmTaskType) {
         mHeight = pmHeight;
@@ -49,12 +52,32 @@ public class Space extends Observable implements Runnable {
         mMarkers = new HashMap<Long, Color>();
         mMarkers.put(Constants.INCLUSION_COLOR_ID, Constants.INCLUSION_COLOR);
         mMarkers.put(Constants.EMPTY_CELL_ID, Color.white);
+        mMarkers.put(Constants.RECRYSTALIZED_COLOR_ID, Constants.RECRYSTALIZED_COLOR);
+        mLastRecrystalizedColor = Constants.RECRYSTALIZED_COLOR_ID;
 
         mState = new Cell[pmHeight][pmWidth];
         if (TaskType.GRAIN_GROWTH.equals(pmTaskType))
             populateSpace();
         if (TaskType.MONTE_CARLO.equals(pmTaskType))
             generateMCSpace();
+    }
+
+    /**
+     * Returns darkened color.
+     *
+     * @param color    color to modify
+     * @param fraction desired intensivity
+     * @return new color
+     */
+    public static Color darkenColor(Color color, double fraction) {
+
+        int red = (int) Math.round(Math.max(0, color.getRed() - 255 * fraction));
+        int green = (int) Math.round(Math.max(0, color.getGreen() - 255 * fraction));
+        int blue = (int) Math.round(Math.max(0, color.getBlue() - 255 * fraction));
+
+        int alpha = color.getAlpha();
+
+        return new Color(red, green, blue, alpha);
     }
 
     /**
@@ -160,6 +183,30 @@ public class Space extends Observable implements Runnable {
         return lvMarker;
     }
 
+    /**
+     * Adds new marker to list, in recrystalization color spectrum.
+     *
+     * @return unique cell marker.
+     */
+    private Long addNewRecrMarker() {
+        Random lvRandom = new Random(System.currentTimeMillis());
+        boolean lvUnique = false;
+
+        Long lvNewMarker = null;
+        while (!lvUnique) {
+            lvNewMarker = lvRandom.nextLong();
+            if (!mMarkers.containsKey(lvNewMarker))
+                lvUnique = true;
+        }
+
+        Color lvNewColor = darkenColor(mMarkers.get(mLastRecrystalizedColor), 0.90);
+
+        mMarkers.put(lvNewMarker, lvNewColor);
+        mLastRecrystalizedColor = lvNewMarker;
+
+        return lvNewMarker;
+    }
+
     @Override
     public void run() {
         setWorking(true);
@@ -168,9 +215,10 @@ public class Space extends Observable implements Runnable {
 
                 if (TaskType.GRAIN_GROWTH.equals(mTaskType))
                     nextState();
-                if (TaskType.MONTE_CARLO.equals(mTaskType)) {
+                if (TaskType.MONTE_CARLO.equals(mTaskType))
                     nextMCStep();
-                }
+                if (TaskType.SRX.equals(mTaskType))
+                    nextSRcStep();
 
                 setChanged();
                 notifyObservers();
@@ -181,6 +229,42 @@ public class Space extends Observable implements Runnable {
                     e.printStackTrace();
                 }
             }
+    }
+
+    private void nextSRcStep() {
+        distributeNucleons();
+    }
+
+    /**
+     * Distributes new nucleons across the space during static recrystalization process.
+     */
+    private void distributeNucleons() {
+        if (NucleationType.Constant.equals(mNucleationType)) {
+            distributeNucleons(mNucleiNumber);
+            mNucleiNumber = 0;
+        }
+    }
+
+    private void distributeNucleons(final int pmNucleiNumber) {
+        if (mHeterogeneusNucleation)
+            distributeNucleonsHeterogenously(pmNucleiNumber);
+        else
+            distributeNucleonsHomogenously(pmNucleiNumber);
+    }
+
+    private void distributeNucleonsHomogenously(final int pmNucleiNumber) {
+        Random lvRandom = new Random(System.currentTimeMillis());
+
+        for (int i = 0; i < pmNucleiNumber; ++i) {
+            int lvX = lvRandom.nextInt(mWidth);
+            int lvY = lvRandom.nextInt(mHeight);
+
+            final Long lvNewMarker = addNewRecrMarker();
+        }
+    }
+
+    private void distributeNucleonsHeterogenously(final int pmNucleiNumber) {
+        //To change body of created methods use File | Settings | File Templates.
     }
 
     /**
@@ -339,6 +423,7 @@ public class Space extends Observable implements Runnable {
 
     public void setTemperature(double pmTemperature) {
         mTemperature = pmTemperature;
+        mKbT = BOLZMANN * mTemperature;
     }
 
     public double getTemperature() {
@@ -369,11 +454,19 @@ public class Space extends Observable implements Runnable {
         mNucleiNumber = pmNucleiNumber;
     }
 
+    public NucleationType getNucleationType() {
+        return mNucleationType;
+    }
+
     public void setNucleationType(NucleationType pmNucleationType) {
         mNucleationType = pmNucleationType;
     }
 
-    public NucleationType getNucleationType() {
-        return mNucleationType;
+    public boolean isHeterogeneusNucleation() {
+        return mHeterogeneusNucleation;
+    }
+
+    public void setHeterogeneusNucleation(boolean pmHeterogeneusNucleation) {
+        mHeterogeneusNucleation = pmHeterogeneusNucleation;
     }
 }
