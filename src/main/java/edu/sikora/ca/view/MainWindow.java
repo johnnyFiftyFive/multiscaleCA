@@ -109,7 +109,7 @@ public class MainWindow {
                     resetButton.setEnabled(false);
                     mSpaceThread = new Thread(automataSpace);
                     mSpaceThread.start();
-//                    ((SpaceCanvas)canvasPanel).setCanvasMode(SpaceCanvas.Mode.SELECT_GRAIN);
+                    ((SpaceCanvas) spacePanel).setCanvasMode(SpaceCanvas.Mode.SELECT_GRAIN);
                 } else {
                     startButton.setEnabled(false);
                     stopButton.setEnabled(true);

@@ -23,6 +23,7 @@ public class Space extends Observable implements Runnable {
     private int mHeight;
     private int mWidth;
     private double mTemperature = 720;
+    private double mKbT = BOLZMANN * mTemperature;
     private int mMCStates = 50;
     private HashMap<Long, Color> mMarkers;
     private TaskType mTaskType;
@@ -165,9 +166,9 @@ public class Space extends Observable implements Runnable {
 
                 if (TaskType.GRAIN_GROWTH.equals(mTaskType))
                     nextState();
-                if (TaskType.MONTE_CARLO.equals(mTaskType))
+                if (TaskType.MONTE_CARLO.equals(mTaskType)) {
                     nextMCStep();
-
+                }
 
                 setChanged();
                 notifyObservers();
@@ -183,7 +184,7 @@ public class Space extends Observable implements Runnable {
     /**
      * Calculates next MC step.
      */
-    private void nextMCStep() {
+    private synchronized void nextMCStep() {
         Vector<Point> lvBorderGrains = findBorderGrains();
         Random lvRandom = new Random(System.currentTimeMillis());
 
@@ -193,14 +194,24 @@ public class Space extends Observable implements Runnable {
             Cell lvCurrentCell = lvNewSpace[lvBorderGrain.y][lvBorderGrain.x];
             NeighbourhoodInfo lvNI = mNeighbourhood.getNeighbourhoodInfo(lvBorderGrain.x, lvBorderGrain.y);
 
-            int lvEnergy = lvNI.calculateEnergy(lvCurrentCell.getMarker());
+
             Vector<Long> lvMarkers = lvNI.getNeighbourMarkers();
+            if (lvMarkers.isEmpty())
+                continue;
+            int lvEnergy = lvNI.calculateEnergy(lvCurrentCell.getMarker());
 
             Long lvNewMarker = lvMarkers.get(lvRandom.nextInt(lvMarkers.size()));
             int lvNewEnergy = lvNI.calculateEnergy(lvNewMarker);
 
-            if (lvNewEnergy - lvEnergy <= 0)
+            int lvEnergyDiff = lvNewEnergy - lvEnergy;
+            if (lvEnergyDiff <= 0) {
                 lvCurrentCell.setMarker(lvNewMarker);
+                continue;
+            }
+
+            if (lvRandom.nextDouble() < Math.exp(-1 * lvEnergyDiff / mKbT))
+                lvCurrentCell.setMarker(lvNewMarker);
+
         }
         mState = lvNewSpace;
     }
@@ -296,6 +307,21 @@ public class Space extends Observable implements Runnable {
         }
 
         return lvPoints;
+    }
+
+    /**
+     * Disables all cells characterized by particular marker.
+     *
+     * @param pmSelectedMarker marker to disable.
+     */
+    public synchronized void setAllDisabled(final Long pmSelectedMarker) {
+        for (int i = 0; i < mHeight; ++i)
+            for (int j = 0; j < mWidth; ++j)
+                if (mState[i][j].getMarker().equals(pmSelectedMarker))
+                    mState[i][j].setDisabled(true);
+
+        setChanged();
+        notifyObservers();
     }
 
     public void setTemperature(double pmTemperature) {

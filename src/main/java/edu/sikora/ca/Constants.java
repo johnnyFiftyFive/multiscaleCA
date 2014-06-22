@@ -13,8 +13,10 @@ public final class Constants {
     public static final String INITIAL_GRAIN_COUNT = "grainCount";
     public static final String NEIGHBOURHOOD = "neighbourhood";
     public static final String BONDUARY_CONDITION = "bonduaryCondition";
-    public static final Long INCLUSION_COLOR_ID = 1000L;
+    public static final Long INCLUSION_COLOR_ID = 0x2L;
     public static final Color INCLUSION_COLOR = Color.black;
+    public static final Long DISABLED_COLOR_ID = 0x3l;
+    public static final Color DISABLED_COLOR = Color.magenta;
     public static final Color BORDER_COLOR = Color.gray;
-    public static final Long EMPTY_CELL_ID = 0x0l;
+    public static final Long EMPTY_CELL_ID = 0x1l;
 }

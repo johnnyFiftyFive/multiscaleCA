@@ -1,5 +1,6 @@
 package edu.sikora.ca.view;
 
+import edu.sikora.ca.Constants;
 import edu.sikora.ca.cells.Cell;
 import edu.sikora.ca.space.Space;
 
@@ -9,7 +10,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Vector;
 
 /**
  * @author Kamil Sikora
@@ -67,7 +67,10 @@ public class SpaceCanvas extends JPanel implements Observer {
 //        int cordDown = rowHeight /*- 1*/; //(rows < 90 ? rowHt - 1 : rowHt);
         for (int i = 0; i < space.getHeight(); ++i)
             for (int j = 0; j < space.getWidth(); ++j) {
-                g.setColor(state[i][j].isAlive() ? space.getColor(state[i][j].getMarker()) : Color.white);
+                if (state[i][j].isDisabled())
+                    g.setColor(Constants.DISABLED_COLOR);
+                else
+                    g.setColor(space.getColor(state[i][j].getMarker()));
                 g.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
             }
 
@@ -121,6 +124,10 @@ public class SpaceCanvas extends JPanel implements Observer {
 
             if (Mode.PLACE_GRAIN.equals(mCanvasMode)) {
                 space.placeNewGrain(lvPoint);
+            }
+            if (Mode.SELECT_GRAIN.equals(mCanvasMode)) {
+                Long lvSelectedMarker = space.getState()[lvPoint.y][lvPoint.x].getMarker();
+                space.setAllDisabled(lvSelectedMarker);
             }
         }
 
