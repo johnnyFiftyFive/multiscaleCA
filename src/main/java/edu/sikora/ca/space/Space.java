@@ -25,6 +25,7 @@ public class Space extends Observable implements Runnable {
     private double mTemperature = 720;
     private double mKbT = BOLZMANN * mTemperature;
     private int mMCStates = 50;
+    private int mNucleiNumber = 50;
     private HashMap<Long, Color> mMarkers;
     private TaskType mTaskType;
     private Neighbourhood mNeighbourhood;
@@ -37,6 +38,7 @@ public class Space extends Observable implements Runnable {
      */
     private boolean mStayAlive;
     private Cell[][] mState;
+    private NucleationType mNucleationType;
 
     public Space(int pmHeight, int pmWidth, TaskType pmTaskType) {
         mHeight = pmHeight;
@@ -324,6 +326,17 @@ public class Space extends Observable implements Runnable {
         notifyObservers();
     }
 
+    /**
+     * Heterogenously distributes energy across the space.
+     */
+    public void distributeEnergy() {
+        Vector<Point> lvBorderGrains = findBorderGrains();
+        for (Point lvBorderGrain : lvBorderGrains) {
+            mState[lvBorderGrain.y][lvBorderGrain.x].setEnergy(100);
+        }
+
+    }
+
     public void setTemperature(double pmTemperature) {
         mTemperature = pmTemperature;
     }
@@ -350,5 +363,17 @@ public class Space extends Observable implements Runnable {
 
     public void setSRX() {
         mTaskType = TaskType.SRX;
+    }
+
+    public void setNucleiNumber(int pmNucleiNumber) {
+        mNucleiNumber = pmNucleiNumber;
+    }
+
+    public void setNucleationType(NucleationType pmNucleationType) {
+        mNucleationType = pmNucleationType;
+    }
+
+    public NucleationType getNucleationType() {
+        return mNucleationType;
     }
 }

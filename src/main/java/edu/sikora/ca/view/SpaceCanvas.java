@@ -65,14 +65,25 @@ public class SpaceCanvas extends JPanel implements Observer {
 
 
 //        int cordDown = rowHeight /*- 1*/; //(rows < 90 ? rowHt - 1 : rowHt);
-        for (int i = 0; i < space.getHeight(); ++i)
-            for (int j = 0; j < space.getWidth(); ++j) {
-                if (state[i][j].isDisabled())
-                    g.setColor(Constants.DISABLED_COLOR);
-                else
-                    g.setColor(space.getColor(state[i][j].getMarker()));
-                g.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
-            }
+        if (!Mode.SHOW_ENERGY.equals(mCanvasMode)) {
+            for (int i = 0; i < space.getHeight(); ++i)
+                for (int j = 0; j < space.getWidth(); ++j) {
+                    if (state[i][j].isDisabled())
+                        g.setColor(Constants.DISABLED_COLOR);
+                    else
+                        g.setColor(space.getColor(state[i][j].getMarker()));
+                    g.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
+                }
+        } else {
+            for (int i = 0; i < space.getHeight(); ++i)
+                for (int j = 0; j < space.getWidth(); ++j) {
+                    if (state[i][j].getEnergy() > 0)
+                        g.setColor(Constants.GRAIN_WITH_ENERGY);
+                    else
+                        g.setColor(Constants.GRAIN_WITHOUT_ENERGY);
+                    g.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
+                }
+        }
 
       /*  Vector<edu.sikora.ca.Point> lvBorderGrains = space.findBorderGrains();
         g.setColor(edu.sikora.ca.Constants.BORDER_COLOR);
@@ -103,8 +114,8 @@ public class SpaceCanvas extends JPanel implements Observer {
 
     public enum Mode {
         PLACE_GRAIN,
-        PLACE_INCLUSION,
-        SELECT_GRAIN
+        SELECT_GRAIN,
+        SHOW_ENERGY
     }
 
     private class CanvasClickListener implements MouseListener {
