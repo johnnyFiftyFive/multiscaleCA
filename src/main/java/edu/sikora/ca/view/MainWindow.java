@@ -180,6 +180,12 @@ public class MainWindow {
                 };
         rbHomogoneus.addActionListener(listener);
         rbHeterogenous.addActionListener(listener);
+        btEnergyDistribution.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((SpaceCanvas) spacePanel).switchEnergyView();
+            }
+        });
     }
 
     public static void main(String[] args) {

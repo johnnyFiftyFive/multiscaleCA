@@ -501,6 +501,8 @@ public class Space extends Observable implements Runnable {
 
     public void setSRX() {
         mTaskType = TaskType.SRX;
+        if (mHeterogeneusNucleation)
+            distributeEnergyHeterogenously();
     }
 
     public void setNucleiNumber(int pmNucleiNumber) {

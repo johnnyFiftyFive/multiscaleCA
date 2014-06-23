@@ -112,6 +112,14 @@ public class SpaceCanvas extends JPanel implements Observer {
         mCanvasMode = pmCanvasMode;
     }
 
+    public void switchEnergyView() {
+        if (mCanvasMode.equals(Mode.SHOW_ENERGY))
+            mCanvasMode = Mode.SELECT_GRAIN;
+        else
+            mCanvasMode = Mode.SHOW_ENERGY;
+        repaint();
+    }
+
     public enum Mode {
         PLACE_GRAIN,
         SELECT_GRAIN,
