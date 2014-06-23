@@ -262,7 +262,7 @@ public class Space extends Observable implements Runnable {
         }
         mState = lvNewSpace;
 
-        ++mSRxIteration;
+        mSRxIteration += 1;
     }
 
     /**
