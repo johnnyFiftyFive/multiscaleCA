@@ -200,7 +200,7 @@ public class Space extends Observable implements Runnable {
                 lvUnique = true;
         }
 
-        Color lvNewColor = darkenColor(mMarkers.get(mLastRecrystalizedColor), 0.90);
+        Color lvNewColor = darkenColor(mMarkers.get(mLastRecrystalizedColor), 0.005);
 
         mMarkers.put(lvNewMarker, lvNewColor);
         mLastRecrystalizedColor = lvNewMarker;
@@ -236,6 +236,27 @@ public class Space extends Observable implements Runnable {
         if (mNucleiNumber > 0)
             distributeNucleons();
 
+        Cell[][] lvNewSpace = mState.clone();
+        MooreNeighbourhood lvMooreNeighbourhood = new MooreNeighbourhood(mNeighbourhood.isPeriodic(), this);
+        Random lvRandom = new Random(System.currentTimeMillis());
+
+        for (Point lvBorderGrain : findBorderGrains()) {
+            Cell lvCurrentCell = lvNewSpace[lvBorderGrain.y][lvBorderGrain.x];
+            if (lvCurrentCell.isRecrystalized())
+                continue;
+            NeighbourhoodInfo lvNI = lvMooreNeighbourhood.getRecrystalizedNeighbourhoodInfo(lvBorderGrain.x, lvBorderGrain.y);
+            if (lvNI.getTotalCount() == 0)
+                continue;
+
+            Vector<Long> lvMarkers = lvNI.getNeighbourMarkers();
+            if (lvMarkers.isEmpty())
+                continue;
+
+
+        }
+        mState = lvNewSpace;
+
+
         ++mSRxIteration;
     }
 
@@ -246,7 +267,7 @@ public class Space extends Observable implements Runnable {
         int lvNewNucleiNumber = 0;
 
         if (NucleationType.Constant.equals(mNucleationType))
-            lvNewNucleiNumber = mNucleiNumber;
+            lvNewNucleiNumber = 10;
         if (NucleationType.Increasing.equals(mNucleationType))
             lvNewNucleiNumber = (int) (mSRxIteration * 3.75);
         if (NucleationType.Decreasing.equals(mNucleationType))
@@ -300,6 +321,14 @@ public class Space extends Observable implements Runnable {
             final Long lvNewMarker = addNewRecrMarker();
             mState[lvPoint.y][lvPoint.x] = new Cell(true, true, lvNewMarker);
         }
+    }
+
+    /**
+     * Distributes energy across the grain borders.
+     */
+    public void distributeEnergyHeterogenously() {
+        for (Point lvPoint : findBorderGrains())
+            mState[lvPoint.y][lvPoint.x].setEnergy(1);
     }
 
     /**

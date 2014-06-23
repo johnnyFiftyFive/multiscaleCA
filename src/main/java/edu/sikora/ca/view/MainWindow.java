@@ -77,8 +77,10 @@ public class MainWindow {
                     TaskType lvTaskType = TaskType.GRAIN_GROWTH;
                     if (rbtMonteCarlo.isSelected())
                         lvTaskType = TaskType.MONTE_CARLO;
-                    if (rbtSRX.isSelected())
+                    if (rbtSRX.isSelected()) {
                         lvTaskType = TaskType.SRX;
+                        automataSpace.distributeEnergyHeterogenously();
+                    }
 
                     automataSpace = new Space(height, width, lvTaskType);
                     if (rbRandomPlacement.isSelected())
@@ -166,6 +168,7 @@ public class MainWindow {
         rbtMonteCarlo.addActionListener(lvFunctionListener);
         rbtSRX.addActionListener(lvFunctionListener);
         ActionListener listener = new
+
                 ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -197,9 +200,9 @@ public class MainWindow {
     }
 
     private void createUIComponents() {
-        widthField = new LimitedJTextField("10", 5);
-        heightField = new JTextField("10", 5);
-        initialGrainCountField = new LimitedJTextField("5", 5);
+        widthField = new LimitedJTextField("100", 5);
+        heightField = new JTextField("100", 5);
+        initialGrainCountField = new LimitedJTextField("50", 5);
         mInclusionsField = new LimitedJTextField("0", 5);
         mTemperatureField = new LimitedJTextField("720", 5);
         mGeneratedGrainsField = new LimitedJTextField("50", 5);
