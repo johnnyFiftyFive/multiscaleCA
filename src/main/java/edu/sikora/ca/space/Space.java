@@ -256,15 +256,36 @@ public class Space extends Observable implements Runnable {
         Random lvRandom = new Random(System.currentTimeMillis());
 
         for (int i = 0; i < pmNucleiNumber; ++i) {
-            int lvX = lvRandom.nextInt(mWidth);
-            int lvY = lvRandom.nextInt(mHeight);
+            boolean lvRecrystalized = false;
+            int lvX = 0;
+            int lvY = 0;
+            while (!lvRecrystalized) {
+                lvX = lvRandom.nextInt(mWidth);
+                lvY = lvRandom.nextInt(mHeight);
+                if (!mState[lvY][lvX].isRecrystalized())
+                    lvRecrystalized = true;
+            }
 
             final Long lvNewMarker = addNewRecrMarker();
+            mState[lvY][lvX] = new Cell(true, true, lvNewMarker);
         }
     }
 
     private void distributeNucleonsHeterogenously(final int pmNucleiNumber) {
-        //To change body of created methods use File | Settings | File Templates.
+        Random lvRandom = new Random(System.currentTimeMillis());
+        Vector<Point> lvBorderGrains = findBorderGrains();
+
+        for (int i = 0; i < pmNucleiNumber; ++i) {
+            Point lvPoint = null;
+            while (lvPoint == null) {
+                Point lvSelectedPoint = lvBorderGrains.get(lvRandom.nextInt(lvBorderGrains.size()));
+                if (!mState[lvSelectedPoint.y][lvSelectedPoint.x].isRecrystalized())
+                    lvPoint = lvSelectedPoint;
+            }
+
+            final Long lvNewMarker = addNewRecrMarker();
+            mState[lvPoint.y][lvPoint.x] = new Cell(true, true, lvNewMarker);
+        }
     }
 
     /**

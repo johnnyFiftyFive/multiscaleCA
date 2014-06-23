@@ -25,6 +25,12 @@ public class Cell {
         this.mMarker = pmMarker;
     }
 
+    public Cell(boolean pmAlive, boolean pmRecrystalized, Long pmMarker) {
+        this.mAlive = pmAlive;
+        this.mRecrystalized = pmRecrystalized;
+        this.mMarker = pmMarker;
+    }
+
     public boolean isAlive() {
         return mAlive;
     }
@@ -60,5 +66,9 @@ public class Cell {
 
     public void setEnergy(int pmEnergy) {
         mEnergy = pmEnergy;
+    }
+
+    public boolean isRecrystalized() {
+        return mRecrystalized;
     }
 }
