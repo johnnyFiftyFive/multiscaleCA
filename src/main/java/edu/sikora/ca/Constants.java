@@ -18,5 +18,10 @@ public final class Constants {
     public static final Long DISABLED_COLOR_ID = 0x3l;
     public static final Color DISABLED_COLOR = Color.magenta;
     public static final Color BORDER_COLOR = Color.gray;
+    public static final Color GRAIN_WITH_ENERGY = new Color(98, 214, 92);
+    public static final Color GRAIN_WITHOUT_ENERGY = new Color(92, 143, 214);
+    public static final Color RECRYSTALIZED_COLOR = Color.red;
+    public static final Long RECRYSTALIZED_COLOR_ID = 0x44l;
     public static final Long EMPTY_CELL_ID = 0x1l;
+
 }

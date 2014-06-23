@@ -2,6 +2,7 @@ package edu.sikora.ca.view;
 
 import edu.sikora.ca.Constants;
 import edu.sikora.ca.neighbourhoods.*;
+import edu.sikora.ca.space.NucleationType;
 import edu.sikora.ca.space.Space;
 import edu.sikora.ca.space.TaskType;
 
@@ -39,6 +40,12 @@ public class MainWindow {
     private JRadioButton rbtSRX;
     private JRadioButton rbRandomPlacement;
     private JRadioButton rbUniformPlacement;
+    private JPanel plSRX;
+    private JButton btEnergyDistribution;
+    private JRadioButton rbHomogoneus;
+    private JRadioButton rbHeterogenous;
+    private JTextField tfNucleiNumber;
+    private JComboBox cbNucleation;
     private Space automataSpace;
     private Thread mSpaceThread;
 
@@ -49,6 +56,7 @@ public class MainWindow {
         frame.setResizable(false);
 
         populateComboboxes();
+//        unlockSrxPanel(false);
 
         frame.pack();
         frame.setVisible(true);
@@ -69,8 +77,10 @@ public class MainWindow {
                     TaskType lvTaskType = TaskType.GRAIN_GROWTH;
                     if (rbtMonteCarlo.isSelected())
                         lvTaskType = TaskType.MONTE_CARLO;
-                    if (rbtSRX.isSelected())
+                    if (rbtSRX.isSelected()) {
                         lvTaskType = TaskType.SRX;
+                        automataSpace.distributeEnergyHeterogenously();
+                    }
 
                     automataSpace = new Space(height, width, lvTaskType);
                     if (rbRandomPlacement.isSelected())
@@ -98,6 +108,9 @@ public class MainWindow {
                     automataSpace.placeInclusions(Integer.parseInt(mInclusionsField.getText()));
                     automataSpace.setTemperature(Double.parseDouble(mTemperatureField.getText()));
                     automataSpace.setGeneratedGrains(Integer.parseInt(mGeneratedGrainsField.getText()));
+                    automataSpace.setNucleiNumber(Integer.parseInt(tfNucleiNumber.getText()));
+                    automataSpace.setNucleationType((NucleationType) cbNucleation.getSelectedItem());
+                    automataSpace.setHeterogeneusNucleation(rbHeterogenous.isSelected());
                     automataSpace.addObserver((SpaceCanvas) spacePanel);
 
                     canvasPanel.add(spacePanel, BorderLayout.CENTER);
@@ -148,24 +161,58 @@ public class MainWindow {
                             automataSpace.setMonteCarlo();
                         if (rbtSRX.isSelected())
                             automataSpace.setSRX();
+
                     }
                 };
         rbtGrainGrowth.addActionListener(lvFunctionListener);
         rbtMonteCarlo.addActionListener(lvFunctionListener);
         rbtSRX.addActionListener(lvFunctionListener);
+        ActionListener listener = new
+
+                ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (rbHomogoneus.isSelected())
+                            automataSpace.setHeterogeneusNucleation(false);
+                        else
+                            automataSpace.setHeterogeneusNucleation(true);
+                    }
+                };
+        rbHomogoneus.addActionListener(listener);
+        rbHeterogenous.addActionListener(listener);
+        btEnergyDistribution.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((SpaceCanvas) spacePanel).switchEnergyView();
+            }
+        });
     }
 
     public static void main(String[] args) {
         new MainWindow();
     }
 
+    /**
+     * Changes access to SRX panel components.
+     *
+     * @param pmLock true for lock components, false to enable.
+     */
+    private void unlockSrxPanel(final boolean pmLock) {
+        Component[] lvComponents = plSRX.getComponents();
+        for (Component lvComponent : lvComponents) {
+            lvComponent.setEnabled(pmLock);
+        }
+
+    }
+
     private void createUIComponents() {
-        widthField = new LimitedJTextField("10", 5);
-        heightField = new JTextField("10", 5);
-        initialGrainCountField = new LimitedJTextField("5", 5);
+        widthField = new LimitedJTextField("100", 5);
+        heightField = new JTextField("100", 5);
+        initialGrainCountField = new LimitedJTextField("50", 5);
         mInclusionsField = new LimitedJTextField("0", 5);
         mTemperatureField = new LimitedJTextField("720", 5);
         mGeneratedGrainsField = new LimitedJTextField("50", 5);
+        tfNucleiNumber = new LimitedJTextField("50", 5);
 
         automataSpace = new Space(100, 100, TaskType.GRAIN_GROWTH);
         automataSpace.setNeighbourhood(new MooreNeighbourhood(true, automataSpace));
@@ -188,5 +235,10 @@ public class MainWindow {
     private void populateComboboxes() {
         for (NeighbourhoodEnum e : NeighbourhoodEnum.values())
             neighbourhoodsBox.addItem(e);
+
+        for (NucleationType lvNucleationType : NucleationType.values()) {
+            cbNucleation.addItem(lvNucleationType);
+        }
+
     }
 }

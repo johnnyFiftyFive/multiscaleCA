@@ -8,8 +8,10 @@ import java.util.Random;
  */
 public class Cell {
     private boolean mAlive;
-    private Long mMarker;
     private boolean mDisabled = false;
+    private boolean mRecrystalized = false;
+    private Long mMarker;
+    private int mEnergy = 0;
 
     @Deprecated
     public Cell(boolean alive) {
@@ -20,6 +22,12 @@ public class Cell {
 
     public Cell(boolean alive, Long pmMarker) {
         this.mAlive = alive;
+        this.mMarker = pmMarker;
+    }
+
+    public Cell(boolean pmAlive, boolean pmRecrystalized, Long pmMarker) {
+        this.mAlive = pmAlive;
+        this.mRecrystalized = pmRecrystalized;
         this.mMarker = pmMarker;
     }
 
@@ -50,5 +58,21 @@ public class Cell {
 
     public void setDisabled(boolean pmDisabled) {
         mDisabled = pmDisabled;
+    }
+
+    public int getEnergy() {
+        return mEnergy;
+    }
+
+    public void setEnergy(int pmEnergy) {
+        mEnergy = pmEnergy;
+    }
+
+    public boolean isRecrystalized() {
+        return mRecrystalized;
+    }
+
+    public void setRecrystalized(final boolean pmRecrystalized) {
+        mRecrystalized = pmRecrystalized;
     }
 }

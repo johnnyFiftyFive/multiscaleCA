@@ -86,6 +86,13 @@ public abstract class Neighbourhood {
         return lvPoints;
     }
 
+    /**
+     * Determines cell state from its neighbourhood.
+     *
+     * @param pmX x coord of investigated cell
+     * @param pmY y coord of investigated cell
+     * @return cell with new or old state
+     */
     public Cell newCellState(int pmX, int pmY) {
         Cell lvCell = mSpace.getState()[pmY][pmX];
 
@@ -94,6 +101,13 @@ public abstract class Neighbourhood {
         return !lvCell.isAlive() && lvNI.getTotalCount() > 0 ? new Cell(true, lvNI.getMarkerOfLargestCount()) : lvCell;
     }
 
+    /**
+     * Fetches info about surrounding cells.
+     *
+     * @param pmX x coord of investigated cell
+     * @param pmY y coord of investigated cell
+     * @return information about surrounding cells
+     */
     public NeighbourhoodInfo getNeighbourhoodInfo(int pmX, int pmY) {
         NeighbourhoodInfo lvNI = new NeighbourhoodInfo();
 
