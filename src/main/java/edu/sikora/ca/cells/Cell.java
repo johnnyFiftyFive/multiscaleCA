@@ -71,4 +71,8 @@ public class Cell {
     public boolean isRecrystalized() {
         return mRecrystalized;
     }
+
+    public void setRecrystalized(final boolean pmRecrystalized) {
+        mRecrystalized = pmRecrystalized;
+    }
 }

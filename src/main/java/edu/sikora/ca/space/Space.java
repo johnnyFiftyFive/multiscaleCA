@@ -249,13 +249,18 @@ public class Space extends Observable implements Runnable {
                 continue;
 
             Vector<Long> lvMarkers = lvNI.getNeighbourMarkers();
-            if (lvMarkers.isEmpty())
-                continue;
 
+            int lvEnergyBefore = lvNI.calculateEnergy(lvCurrentCell.getMarker()) + lvCurrentCell.getEnergy();
+            Long lvNewMarker = lvMarkers.get(lvRandom.nextInt(lvMarkers.size()));
+            int lvEnergyAfter = lvNI.calculateEnergy(lvNewMarker);
+
+            if (lvEnergyAfter - lvEnergyBefore <= 0) {
+                lvNewSpace[lvBorderGrain.y][lvBorderGrain.x].setMarker(lvNewMarker);
+                lvNewSpace[lvBorderGrain.y][lvBorderGrain.x].setRecrystalized(true);
+            }
 
         }
         mState = lvNewSpace;
-
 
         ++mSRxIteration;
     }
@@ -328,7 +333,7 @@ public class Space extends Observable implements Runnable {
      */
     public void distributeEnergyHeterogenously() {
         for (Point lvPoint : findBorderGrains())
-            mState[lvPoint.y][lvPoint.x].setEnergy(1);
+            mState[lvPoint.y][lvPoint.x].setEnergy(10);
     }
 
     /**

@@ -79,4 +79,5 @@ public class NeighbourhoodInfo {
     public Vector<Long> getNeighbourMarkers() {
         return new Vector<Long>(mCells.keySet());
     }
+
 }
