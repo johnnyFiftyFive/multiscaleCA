@@ -108,6 +108,7 @@ public class MainWindow {
                     automataSpace.setGeneratedGrains(Integer.parseInt(mGeneratedGrainsField.getText()));
                     automataSpace.setNucleiNumber(Integer.parseInt(tfNucleiNumber.getText()));
                     automataSpace.setNucleationType((NucleationType) cbNucleation.getSelectedItem());
+                    automataSpace.setHeterogeneusNucleation(rbHeterogenous.isSelected());
                     automataSpace.addObserver((SpaceCanvas) spacePanel);
 
                     canvasPanel.add(spacePanel, BorderLayout.CENTER);
@@ -164,15 +165,16 @@ public class MainWindow {
         rbtGrainGrowth.addActionListener(lvFunctionListener);
         rbtMonteCarlo.addActionListener(lvFunctionListener);
         rbtSRX.addActionListener(lvFunctionListener);
-        ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (rbHomogoneus.isSelected())
-                    automataSpace.setHeterogeneusNucleation(false);
-                else
-                    automataSpace.setHeterogeneusNucleation(true);
-            }
-        };
+        ActionListener listener = new
+                ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (rbHomogoneus.isSelected())
+                            automataSpace.setHeterogeneusNucleation(false);
+                        else
+                            automataSpace.setHeterogeneusNucleation(true);
+                    }
+                };
         rbHomogoneus.addActionListener(listener);
         rbHeterogenous.addActionListener(listener);
     }

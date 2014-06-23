@@ -41,7 +41,8 @@ public class Space extends Observable implements Runnable {
     private boolean mStayAlive;
     private Cell[][] mState;
     private NucleationType mNucleationType;
-    private boolean mHeterogeneusNucleation;
+    private boolean mHeterogeneusNucleation = false;
+    private int mSRxIteration = 0;
 
     public Space(int pmHeight, int pmWidth, TaskType pmTaskType) {
         mHeight = pmHeight;
@@ -232,17 +233,30 @@ public class Space extends Observable implements Runnable {
     }
 
     private void nextSRcStep() {
-        distributeNucleons();
+        if (mNucleiNumber > 0)
+            distributeNucleons();
+
+        ++mSRxIteration;
     }
 
     /**
      * Distributes new nucleons across the space during static recrystalization process.
      */
     private void distributeNucleons() {
-        if (NucleationType.Constant.equals(mNucleationType)) {
-            distributeNucleons(mNucleiNumber);
-            mNucleiNumber = 0;
-        }
+        int lvNewNucleiNumber = 0;
+
+        if (NucleationType.Constant.equals(mNucleationType))
+            lvNewNucleiNumber = mNucleiNumber;
+        if (NucleationType.Increasing.equals(mNucleationType))
+            lvNewNucleiNumber = (int) (mSRxIteration * 3.75);
+        if (NucleationType.Decreasing.equals(mNucleationType))
+            lvNewNucleiNumber = (int) Math.ceil(mNucleiNumber * 0.3);
+
+        if (lvNewNucleiNumber > mNucleiNumber)
+            lvNewNucleiNumber = mNucleiNumber;
+
+        distributeNucleons(mNucleiNumber);
+        mNucleiNumber -= lvNewNucleiNumber;
     }
 
     private void distributeNucleons(final int pmNucleiNumber) {
@@ -429,17 +443,6 @@ public class Space extends Observable implements Runnable {
 
         setChanged();
         notifyObservers();
-    }
-
-    /**
-     * Heterogenously distributes energy across the space.
-     */
-    public void distributeEnergy() {
-        Vector<Point> lvBorderGrains = findBorderGrains();
-        for (Point lvBorderGrain : lvBorderGrains) {
-            mState[lvBorderGrain.y][lvBorderGrain.x].setEnergy(100);
-        }
-
     }
 
     public void setTemperature(double pmTemperature) {
