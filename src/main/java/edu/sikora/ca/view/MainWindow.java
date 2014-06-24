@@ -126,6 +126,11 @@ public class MainWindow {
                 } else {
                     startButton.setEnabled(false);
                     stopButton.setEnabled(true);
+
+                    if (automataSpace.areCellsDisabled()){
+                        automataSpace.generateDisabledMCSpace();
+                    }
+
                     automataSpace.setWorking(true);
                 }
             }

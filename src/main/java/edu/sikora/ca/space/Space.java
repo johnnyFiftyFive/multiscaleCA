@@ -43,6 +43,7 @@ public class Space extends Observable implements Runnable {
     private NucleationType mNucleationType;
     private boolean mHeterogeneusNucleation = false;
     private int mSRxIteration = 0;
+    private boolean mDisabledCells;
 
     public Space(int pmHeight, int pmWidth, TaskType pmTaskType) {
         mHeight = pmHeight;
@@ -101,6 +102,24 @@ public class Space extends Observable implements Runnable {
         for (int i = 0; i < mHeight; ++i)
             for (int j = 0; j < mWidth; ++j)
                 mState[i][j] = new Cell(true, lvMarkers[lvRandom.nextInt(2000) % mMCStates]);
+    }
+
+    public void generateDisabledMCSpace() {
+        Random lvRandom = new Random(System.currentTimeMillis());
+
+        for (int i = 0; i < mMCStates; ++i)
+            addNewMarker();
+
+        Long[] lvMarkers = new Long[mMCStates];
+
+        lvMarkers = mMarkers.keySet().toArray(lvMarkers);
+
+        for (int i = 0; i < mHeight; ++i)
+            for (int j = 0; j < mWidth; ++j)
+                if (mState[i][j].isDisabled())
+                    continue;
+                else
+                    mState[i][j] = new Cell(true, lvMarkers[lvRandom.nextInt(2000) % mMCStates]);
     }
 
     /**
@@ -475,6 +494,8 @@ public class Space extends Observable implements Runnable {
                 if (mState[i][j].getMarker().equals(pmSelectedMarker))
                     mState[i][j].setDisabled(true);
 
+        mDisabledCells = true;
+
         setChanged();
         notifyObservers();
     }
@@ -529,4 +550,14 @@ public class Space extends Observable implements Runnable {
     public void setHeterogeneusNucleation(boolean pmHeterogeneusNucleation) {
         mHeterogeneusNucleation = pmHeterogeneusNucleation;
     }
+
+    public boolean areCellsDisabled() {
+        return mDisabledCells;
+    }
+
+    public void setDisabledCells(boolean pmDisabledCells) {
+        mDisabledCells = pmDisabledCells;
+    }
+
+
 }
