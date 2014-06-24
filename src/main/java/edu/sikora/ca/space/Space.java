@@ -200,7 +200,7 @@ public class Space extends Observable implements Runnable {
                 lvUnique = true;
         }
 
-        Color lvNewColor = darkenColor(mMarkers.get(mLastRecrystalizedColor), 0.005);
+        Color lvNewColor = darkenColor(mMarkers.get(mLastRecrystalizedColor), 0.01);
 
         mMarkers.put(lvNewMarker, lvNewColor);
         mLastRecrystalizedColor = lvNewMarker;

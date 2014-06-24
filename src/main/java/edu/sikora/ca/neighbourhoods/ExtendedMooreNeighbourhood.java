@@ -13,7 +13,7 @@ import java.util.Vector;
  *         Data: 21.06.14
  */
 public class ExtendedMooreNeighbourhood extends Neighbourhood {
-    private final int PROBABILITY = 7;
+    private final double PROBABILITY = 0.5;
 
     public ExtendedMooreNeighbourhood(boolean pmPeriodicBorderCondition, Space pmAutomataSpace) {
         super(pmAutomataSpace, pmPeriodicBorderCondition);
@@ -37,7 +37,7 @@ public class ExtendedMooreNeighbourhood extends Neighbourhood {
             return !lvCell.isAlive() && lvNI.getTotalCount() > 0 ? new Cell(true, lvNI.getMarkerOfLargestCount()) : lvCell;
 
         Random lvRandom = new Random(System.currentTimeMillis());
-        return !lvCell.isAlive() && lvAllNI.getTotalCount() > 0 && lvRandom.nextInt(10) < PROBABILITY ? new Cell(true, lvAllNI.getMarkerOfLargestCount()) : lvCell;
+        return !lvCell.isAlive() && lvAllNI.getTotalCount() > 0 && lvRandom.nextDouble() < PROBABILITY ? new Cell(true, lvAllNI.getMarkerOfLargestCount()) : lvCell;
     }
 
     private NeighbourhoodInfo getFurtherMooreInfo(int pmX, int pmY) {

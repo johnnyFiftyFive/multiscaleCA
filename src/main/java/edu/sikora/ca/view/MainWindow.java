@@ -206,9 +206,9 @@ public class MainWindow {
     }
 
     private void createUIComponents() {
-        widthField = new LimitedJTextField("100", 5);
-        heightField = new JTextField("100", 5);
-        initialGrainCountField = new LimitedJTextField("50", 5);
+        widthField = new LimitedJTextField("200", 5);
+        heightField = new JTextField("200", 5);
+        initialGrainCountField = new LimitedJTextField("100", 5);
         mInclusionsField = new LimitedJTextField("0", 5);
         mTemperatureField = new LimitedJTextField("720", 5);
         mGeneratedGrainsField = new LimitedJTextField("50", 5);
