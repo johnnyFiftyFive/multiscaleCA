@@ -16,7 +16,7 @@ import java.util.Observer;
  *         Data: 21.03.14
  */
 public class SpaceCanvas extends JPanel implements Observer {
-    private static final int MAX_WIDTH = 1500;
+    private static final int MAX_WIDTH = 1000;
     private static final int MAX_HEIGHT = 800;
     private int cellWidth;
     private int cellHeight;
@@ -47,13 +47,13 @@ public class SpaceCanvas extends JPanel implements Observer {
             yDim = 1;
 
 
-        while (yDim * width > MAX_WIDTH && yDim != 1) {
+        while (yDim * height > MAX_HEIGHT && yDim != 1) {
             --yDim;
         }
 
         cellWidth = cellHeight = yDim;
 
-        setPreferredSize(new Dimension(yDim * width, yDim * height));
+        setPreferredSize(new Dimension(yDim * height, xDim * width));
     }
 
     @Override
@@ -77,10 +77,13 @@ public class SpaceCanvas extends JPanel implements Observer {
         } else {
             for (int i = 0; i < space.getHeight(); ++i)
                 for (int j = 0; j < space.getWidth(); ++j) {
+
                     if (state[i][j].getEnergy() > 0)
                         g.setColor(Constants.GRAIN_WITH_ENERGY);
                     else
                         g.setColor(Constants.GRAIN_WITHOUT_ENERGY);
+                    if (state[i][j].isRecrystalized())
+                        g.setColor(Color.orange);
                     g.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                 }
         }

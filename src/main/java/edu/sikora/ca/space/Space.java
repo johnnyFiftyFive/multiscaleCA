@@ -238,7 +238,7 @@ public class Space extends Observable implements Runnable {
                 if (TaskType.MONTE_CARLO.equals(mTaskType))
                     nextMCStep();
                 if (TaskType.SRX.equals(mTaskType))
-                    nextSRcStep();
+                    nextSRxStep();
 
                 setChanged();
                 notifyObservers();
@@ -251,7 +251,7 @@ public class Space extends Observable implements Runnable {
             }
     }
 
-    private void nextSRcStep() {
+    private void nextSRxStep() {
         if (mNucleiNumber > 0)
             distributeNucleons();
 
@@ -261,8 +261,8 @@ public class Space extends Observable implements Runnable {
 
         for (Point lvBorderGrain : findBorderGrains()) {
             Cell lvCurrentCell = lvNewSpace[lvBorderGrain.y][lvBorderGrain.x];
-            if (lvCurrentCell.isRecrystalized())
-                continue;
+            /*if (lvCurrentCell.isRecrystalized())
+                continue;*/
             NeighbourhoodInfo lvNI = lvMooreNeighbourhood.getRecrystalizedNeighbourhoodInfo(lvBorderGrain.x, lvBorderGrain.y);
             if (lvNI.getTotalCount() == 0)
                 continue;
@@ -276,6 +276,7 @@ public class Space extends Observable implements Runnable {
             if (lvEnergyAfter - lvEnergyBefore <= 0) {
                 lvNewSpace[lvBorderGrain.y][lvBorderGrain.x].setMarker(lvNewMarker);
                 lvNewSpace[lvBorderGrain.y][lvBorderGrain.x].setRecrystalized(true);
+                lvNewSpace[lvBorderGrain.y][lvBorderGrain.x].setEnergy(0);
             }
 
         }
@@ -352,7 +353,7 @@ public class Space extends Observable implements Runnable {
      */
     public void distributeEnergyHeterogenously() {
         for (Point lvPoint : findBorderGrains())
-            mState[lvPoint.y][lvPoint.x].setEnergy(10);
+            mState[lvPoint.y][lvPoint.x].setEnergy(30);
     }
 
     /**

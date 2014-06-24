@@ -123,11 +123,12 @@ public class MainWindow {
                     mSpaceThread = new Thread(automataSpace);
                     mSpaceThread.start();
                     ((SpaceCanvas) spacePanel).setCanvasMode(SpaceCanvas.Mode.SELECT_GRAIN);
+                    frame.pack();
                 } else {
                     startButton.setEnabled(false);
                     stopButton.setEnabled(true);
 
-                    if (automataSpace.areCellsDisabled()){
+                    if (automataSpace.areCellsDisabled()) {
                         automataSpace.generateDisabledMCSpace();
                     }
 
